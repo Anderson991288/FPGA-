@@ -409,5 +409,7 @@ set_property IOSTANDARD TMDS_33 [get_ports hdmi_tx_clk_p]
 set_property CLOCK_DEDICATED_ROUTE BACKBONE [get_nets inst_clock/inst/clk_in1_clock]
 ```
 
-5.執行完後燒入至Z7-Lite開發板上
+### 5.執行完後燒入至Z7-Lite開發板上
 
+
+![Program](https://user-images.githubusercontent.com/68816726/212468035-f21b7534-5f75-42fa-ace8-d4feb7dd0f2b.png)
