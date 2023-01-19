@@ -28,6 +28,8 @@ https://github.com/Digilent/vivado-library
 ![IP](https://user-images.githubusercontent.com/68816726/212467573-0fb38603-4f22-4df2-ac03-2888e9024b12.png)
 
 
+
+
 ### 4.編寫程式
 
 ### parallel_to_serial.v
