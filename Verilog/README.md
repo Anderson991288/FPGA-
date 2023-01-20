@@ -73,3 +73,16 @@ sudo apt install gtkwave
   end
 end
   ```
+  
+ ### Blocking vs Non-Blocking
+ 
+ Blocking : 程式碼會依序一行一行執行
+ 
+ Non-Blocking : 用於序向邏輯等需要同步的電路,該段程式碼以*平行*的方式執行
+ 
+
+ 
+ * always 用 clock 觸發的區塊要使用 nonblocking
+ * always 沒有用 clock 觸發（組合邏輯）的區塊要使用 blocking
+ * assign 語句一律使用 blocking
+ * 在同一個 always block 中不可同時出現 nonblocking 及 blocking
