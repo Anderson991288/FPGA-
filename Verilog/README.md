@@ -73,7 +73,8 @@ sudo apt install gtkwave
   end
 end
   ```
-  
+  * * *
+
  ### Blockingvs Non-Blocking 
  
  Blocking  : 程式碼會依序一行一行執行
@@ -103,7 +104,7 @@ end
  * assign 語句一律使用 blocking
  * 在同一個 always block 中不可同時出現 nonblocking 及 blocking
 
-
+* * *
 ### 邏輯相等（==）與邏輯全等（===）的區別是：
 
 當進行相等運算(==)時，兩個操作數必須逐位相等，期比較結果才為1（真），如果這些位是不定態（X）或高阻態（Z），其相等比較的結果就會是不定值
@@ -115,3 +116,4 @@ end
 則A==B 運算結果為X；
 
   A===B 運算結果為1
+* * *
