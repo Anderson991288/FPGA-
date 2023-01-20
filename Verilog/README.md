@@ -74,9 +74,9 @@ sudo apt install gtkwave
 end
   ```
   
- ### Blocking vs Non-Blocking
+ ### Blockingvs Non-Blocking 
  
- Blocking : 程式碼會依序一行一行執行
+ Blocking  : 程式碼會依序一行一行執行
  
  Non-Blocking : 用於序向邏輯等需要同步的電路,該段程式碼以*平行*的方式執行
  
