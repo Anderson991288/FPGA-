@@ -78,9 +78,25 @@ end
  
  Blocking  : 程式碼會依序一行一行執行
  
+ ```
+ always@(sel or a or b) begin
+  case (sel)
+    2'b00 : c = a;
+    2'b01 : c = b;
+  endcase
+end
+ ```
+ 
  Non-Blocking : 用於序向邏輯等需要同步的電路,該段程式碼以*平行*的方式執行
  
-
+ ```
+ always@(posedge clk or negedge reset_n) begin
+   if (!reset_n)
+     counter <= 8'b00;
+   else
+    counter <= counter + 1;
+end
+```
  
  * always 用 clock 觸發的區塊要使用 nonblocking
  * always 沒有用 clock 觸發（組合邏輯）的區塊要使用 blocking
