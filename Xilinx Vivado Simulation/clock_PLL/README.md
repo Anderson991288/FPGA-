@@ -15,6 +15,7 @@ parameter HS_BP = 1000;
 parameter HS_POL = 1'b1;
 
 
+
 reg [12:0] hs_counter;
 //reg [12:0] counter;
  
