@@ -342,4 +342,5 @@ end
 endmodule
 ```
 
+![Screenshot 2023-01-27 162305](https://user-images.githubusercontent.com/68816726/215040795-66658586-1946-4678-b00e-1049b76de3e5.png)
 
