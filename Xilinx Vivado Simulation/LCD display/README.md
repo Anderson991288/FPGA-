@@ -36,3 +36,310 @@ Blanking" is the synchronization time of a line, the "Blanking" time plus the "A
 
 
 ![jURiy](https://user-images.githubusercontent.com/68816726/215011866-d7d44b8f-da9e-4a32-b021-b539013953c6.jpg)
+
+
+
+
+VGA_GEN.v
+
+
+```
+
+`timescale 1ns / 1ps
+
+module VGA_GEN(
+
+input   wire			      clk,
+input	wire			  rst_n,
+output	wire			  vga_clk,
+output	wire			  vpg_de,
+output 	wire 			  vpg_disp,
+output	reg			      vga_hs,
+output	reg			      vga_vs,
+output	reg      [23:0]	  rgb  
+   	
+);
+
+parameter       HS_TOTAL = 525 - 1;
+parameter       HS_SYNC = 41 - 1;
+parameter       HS_START = 43 - 1;
+parameter       HS_END = 523 - 1;
+parameter       V_TOTAL = 286 - 1;
+parameter       V_SYNC = 10 - 1;
+parameter       V_START = 12 - 1;
+parameter       V_END = 284 - 1;
+parameter       SQUARE_X    =   150;
+parameter       SQUARE_Y    =   150;
+parameter       SCREEN_X    =   480;
+parameter       SCREEN_Y    =   272;
+
+
+
+wire 		rst;
+reg [12:0]	cnt_h;
+reg [12:0]	cnt_v;
+reg [11:0]	x;
+reg 		flag_x;
+reg [11:0]	y;
+reg 		flag_y;
+wire        locked1;       
+
+
+assign vpg_disp = 1'b1;
+assign rst = ~rst_n;
+
+ clk_wiz_0 clock(
+    .clk_out1(vga_clk),    
+    .reset(rst), 
+    .locked(locked1),     
+    .clk_in1(clk));     
+    
+always @(posedge vga_clk )
+	begin
+		if (rst==1'b1) 
+		begin
+		cnt_h <= 'd0;
+		end
+		
+	else if (cnt_h == HS_TOTAL) 	
+		begin
+		cnt_h <= 'd0;
+		end
+		
+	else if(cnt_h != HS_TOTAL) 
+		begin
+		cnt_h <= cnt_h + 1'b1;
+		end
+end
+
+
+always @(posedge vga_clk )
+	begin
+	if (rst==1'b1) 
+		begin
+		cnt_v <='d0;
+		end
+		
+	else if (cnt_v == V_TOTAL && cnt_h == HS_TOTAL) 
+		begin
+		cnt_v <= 'd0;
+		end
+		
+	else if(cnt_h == HS_TOTAL) 
+	begin
+		cnt_v <= cnt_v + 1'b1;
+	end
+	
+end
+
+
+always @(posedge vga_clk ) 
+	begin
+	if (rst==1'b1) 
+		begin
+		vga_hs <= 1'b1;
+		end
+		
+	else if (cnt_h == HS_TOTAL) 	
+		begin
+		vga_hs <= 1'b1;
+		end
+		
+	else if (cnt_h == HS_SYNC) 
+		begin
+		vga_hs <= 1'b0;
+		end
+end
+
+
+always @(posedge vga_clk ) 
+	begin
+	if (rst==1'b1) 
+		begin
+		vga_vs <= 1'b1;
+		end
+		
+	else if (cnt_v == V_TOTAL && cnt_h == HS_TOTAL) 
+		begin
+		vga_vs <= 1'b1;
+		end 
+		
+	else if (cnt_v == V_SYNC && cnt_h == HS_TOTAL) 
+		begin
+		vga_vs <=  1'b0;
+		end
+		
+end
+
+
+always @(posedge vga_clk ) 
+	begin
+	if (rst==1'b1) 
+		begin
+		x <='d0;
+		end
+	
+	else if (flag_x == 1'b0 && cnt_v == V_TOTAL && cnt_h == HS_TOTAL) 
+		begin
+		x <= x + 1'b1;
+		end
+		
+	else if(flag_x == 1'b1 && cnt_v == V_TOTAL && cnt_h == HS_TOTAL) 
+		begin
+		x <= x - 1'b1;
+		end
+end
+
+
+always @(posedge vga_clk ) 
+	begin
+	if (rst==1'b1) 
+		begin
+		flag_x <= 1'b0;
+		end
+		
+	else if (flag_x == 1'b0 && cnt_v ==V_TOTAL && cnt_h == HS_TOTAL && x==(HS_END - HS_START - SQUARE_X - 1'b1)) 
+		begin
+		flag_x <= 1'b1;
+		end
+	
+	else if (flag_x == 1'b1 && cnt_v ==V_TOTAL && cnt_h == HS_TOTAL && x=='d1) 
+		begin
+		flag_x <= 1'b0;
+		end
+end
+
+
+always @(posedge vga_clk ) 
+	begin
+	if (rst==1'b1) 
+		begin
+		y <= 'd0;
+		end
+	
+	else if (flag_y == 1'b0 && cnt_v ==V_TOTAL && cnt_h == HS_TOTAL) 
+		begin
+		y <= y + 1'b1;
+		end
+		
+	else if (flag_y == 1'b1 && cnt_v ==V_TOTAL && cnt_h == HS_TOTAL) 
+		begin
+		y <= y - 1'b1;
+		end
+end
+
+
+always @(posedge vga_clk )
+	begin
+	if (rst==1'b1)
+		begin
+		flag_y <= 1'b0;
+		end
+	else if (flag_y == 1'b0 && cnt_v ==V_TOTAL && cnt_h == HS_TOTAL && y==(V_END - V_START - SQUARE_Y - 1'b1)) 
+		begin
+		flag_y <= 1'b1;
+		end
+	else if (flag_y == 1'b1 && cnt_v ==V_TOTAL && cnt_h == HS_TOTAL && y=='d1 ) 
+		begin
+		flag_y <= 1'b0;
+		end
+end
+
+
+
+//RGB
+always @(posedge vga_clk ) 
+	begin
+	if (rst==1'b1) 
+		begin
+		rgb <='d0;
+		end
+	
+	else if(cnt_h >=HS_START+x && cnt_h <=HS_START+SQUARE_X+x && cnt_v >=V_START+y && cnt_v <=V_START+SQUARE_Y+y)
+		begin
+		rgb <= 24'hFFB6C1;
+		end
+		
+	else if (cnt_h >=HS_START && cnt_h <HS_END && cnt_v >=V_START && cnt_v <V_END && cnt_h[4:0]>='d20) 
+		begin
+		rgb <=24'h00FF00;//green
+		end
+		
+	else if (cnt_h >=HS_START && cnt_h <HS_END && cnt_v >=V_START && cnt_v <V_END && (cnt_h[4:0]>='d10 && cnt_h[2:0]<'d20)) 
+		begin
+		rgb <=24'h0000FF;//blue
+		end
+		
+	else if (cnt_h >=HS_START && cnt_h <HS_END && cnt_v >=V_START && cnt_v <V_END && cnt_h[4:0]<'d10) 
+		begin
+		rgb <=24'hFF0000;//red
+		end
+		
+	else begin
+		rgb <= 'd0;
+		end
+		
+	end
+
+assign  vpg_de = (cnt_h >= HS_START) && (cnt_h < HS_END) && (cnt_v >= V_START) && (cnt_v < V_END);
+
+endmodule
+
+```
+
+
+testbench:
+
+
+```
+module tb();
+parameter       HS_TOTAL = 525 - 1;
+parameter       HS_SYNC = 41 - 1;
+parameter       HS_START = 43 - 1;
+parameter       HS_END = 523 - 1;
+parameter       V_TOTAL = 286 - 1;
+parameter       V_SYNC = 10 - 1;
+parameter       V_START = 12 - 1;
+parameter       V_END = 284 - 1;
+parameter       SQUARE_X    =   150;
+parameter       SQUARE_Y    =   150;
+parameter       SCREEN_X    =   480;
+parameter       SCREEN_Y    =   272;
+
+reg rst_n;
+reg clk;
+
+wire vga_clk;
+wire vpg_de;
+wire vpg_disp;
+wire vga_hs;
+wire vga_vs;
+wire rgb  ; 
+
+
+VGA_GEN #(
+
+)
+inst_VGA_GEN (
+.clk (clk),
+.rst_n (rst_n),
+.vga_hs(vga_hs),
+.vga_vs(vga_vs),
+.vga_clk (vga_clk),
+.vpg_de(vpg_de),
+.rgb(rgb)
+);
+
+initial begin
+clk = 0;
+forever #(10) clk = ~clk;
+end
+initial begin
+rst_n = 0;
+#100;
+rst_n = 1;
+end
+endmodule
+```
+
+
