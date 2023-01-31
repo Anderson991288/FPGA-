@@ -75,3 +75,7 @@ set_property -dict { PACKAGE_PIN D22 IOSTANDARD LVCMOS12 } [get_ports {rst_n }];
 
 
 
+
+https://user-images.githubusercontent.com/68816726/215813505-da88a77b-6ee4-492c-a86a-572c180b6234.mov
+
+
